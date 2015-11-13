@@ -22,6 +22,15 @@ namespace RoslynNUnitLight
             TestCodeRefactoring(document, span, expected);
         }
 
+        protected void TestMissingCodeRefactoring(string markupCode)
+        {
+            Document document;
+            TextSpan span;
+            Assert.That(TestHelpers.TryGetDocumentAndSpanFromMarkup(markupCode, LanguageName, out document, out span), Is.True);
+
+            TestMissingCodeRefactoring(document, span);
+        }
+
         protected void TestCodeRefactoring(Document document, TextSpan span, string expected)
         {
             var codeRefactorings = GetCodeRefactorings(document, span);
@@ -29,6 +38,13 @@ namespace RoslynNUnitLight
             Assert.That(codeRefactorings.Length, Is.EqualTo(1));
 
             Verify.CodeAction(codeRefactorings[0], document, expected);
+        }
+
+        protected void TestMissingCodeRefactoring(Document document, TextSpan span)
+        {
+            var codeRefactorings = GetCodeRefactorings(document, span);
+
+            Assert.That(codeRefactorings.Length, Is.EqualTo(0));
         }
 
         private ImmutableArray<CodeAction> GetCodeRefactorings(Document document, TextSpan span)
